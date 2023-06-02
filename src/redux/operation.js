@@ -12,3 +12,5 @@ export const fetchUserCurrency = createAsyncThunk(
     }
   }
 );
+
+const apikey = 'Bqf0jgud3HsN3E435u3LbG7qgqDyjvOj';
