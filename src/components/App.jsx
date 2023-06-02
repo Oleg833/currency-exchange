@@ -3,10 +3,17 @@ import { Layout } from './Layout/Layout';
 import { Home } from './Home/Home';
 import { Rates } from 'pages/Rates';
 import { useEffect } from 'react';
-import { getUserInfo } from 'services/services';
+import { fetchUserCurrency } from 'redux/operation';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectBaseCurrency } from 'redux/selectors';
+import { addBaseCurrency } from 'redux/slice';
 
 export const App = () => {
+  const dispatch = useDispatch();
+  const currency = useSelector(selectBaseCurrency);
+
   useEffect(() => {
+    if (currency) return;
     const options = {
       enableHighAccuracy: true,
       timeout: 5000,
@@ -16,20 +23,16 @@ export const App = () => {
     function success(pos) {
       const crd = pos.coords;
 
-      getUserInfo(crd);
-
-      console.log('Your current position is:');
-      console.log(`Latitude : ${crd.latitude}`);
-      console.log(`Longitude: ${crd.longitude}`);
-      console.log(`More or less ${crd.accuracy} meters.`);
+      dispatch(fetchUserCurrency(crd));
     }
 
     function error(err) {
       console.warn(`ERROR(${err.code}): ${err.message}`);
+      dispatch(addBaseCurrency('USD'));
     }
 
     navigator.geolocation.getCurrentPosition(success, error, options);
-  }, []);
+  }, [dispatch, currency]);
 
   return (
     <div>
